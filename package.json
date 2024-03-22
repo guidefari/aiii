@@ -2,10 +2,16 @@
   "name": "aiii",
   "module": "index.ts",
   "type": "module",
+  "scripts": {
+    "dev": "bun run src/index.ts"
+  },
   "devDependencies": {
     "@types/bun": "latest"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "openai": "^4.29.2"
   }
 }
