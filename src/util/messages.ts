@@ -1,5 +1,5 @@
-import { openaICE } from "."
-import type { OpenAIChatMessage } from "./types"
+import { openaICE } from ".."
+import type { OpenAIChatMessage } from "../types"
 
 export const formatMessage = (userInput: string): OpenAIChatMessage => ({ role: 'user', content: userInput })
 

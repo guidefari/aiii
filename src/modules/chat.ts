@@ -1,13 +1,12 @@
 import readline from 'node:readline'
-import { formatMessage, newMessage } from './util'
-import type { OpenAIChatMessage } from './types'
+import { formatMessage, newMessage } from '../util/messages'
+import type { OpenAIChatMessage } from '../types'
+import { rl } from '..'
 
-const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
-})
 
 export const chat = () => {
+    console.log("Chatbot initialized. Type 'exit' to end the chat.")
+
     const history: OpenAIChatMessage[] = [
         {
             role: 'system',
@@ -15,6 +14,7 @@ export const chat = () => {
         }
     ]
     const start = async () => {
+        console.log('history:', history)
         rl.question('You: ', async (userInput) => {
             if (userInput.toLowerCase() === 'exit') {
                 rl.close()
@@ -24,7 +24,7 @@ export const chat = () => {
 
             try {
                 const response = await newMessage(history, userMessage)
-                response ?? history.push(userMessage, response)
+                response && history.push(userMessage, response)
                 writeLine(`\n\nAI: ${response.content}\n\n`)
             } catch (error) {
                 console.info('We have a problem houston:', error)
