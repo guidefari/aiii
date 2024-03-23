@@ -5,13 +5,13 @@ import { OpenAIEmbeddings } from 'langchain/embeddings/openai'
 import { CharacterTextSplitter } from 'langchain/text_splitter'
 import { PDFLoader } from 'langchain/document_loaders/fs/pdf'
 import { YoutubeLoader } from 'langchain/document_loaders/web/youtube'
-import { openaiApiClient, rl } from '..'
+import { mainApp, openaiApiClient, rl } from '..'
 import type { OpenAIChatMessage } from '../types'
 import { formatMessage, formatQAMessage, newMessage, newQAMessage } from '../util/messages'
 import { writeLine } from './chat'
 import path from 'node:path'
 
-const video = `https://youtu.be/zR_iuq2evXo?si=cG8rODgRgXOx9_Cn`
+// const video = `https://youtu.be/zR_iuq2evXo?si=cG8rODgRgXOx9_Cn`
 
 export const createStore = (docs: Document[]) =>
     MemoryVectorStore.fromDocuments(docs, new OpenAIEmbeddings())
@@ -43,9 +43,8 @@ export const docsFromYTVideo = (video: string) => {
 //     )
 // }
 
-const loadStore = async () => {
+const loadStore = async (video: string) => {
     const videoDocs = await docsFromYTVideo(video)
-    // console.log('videoDocs:', videoDocs)
     // const pdfDocs = await docsFromPDF()
 
     // return createStore([...videoDocs, ...pdfDocs])
@@ -53,8 +52,13 @@ const loadStore = async () => {
 }
 
 export const query = async () => {
-    const store = await loadStore();
+    writeLine('\n\nThis module allows you to ask questions about a youtube video🔥\n\n');
+    let store: MemoryVectorStore
 
+    readlineInput('Enter video URL: ', async (video) => {
+        store = await loadStore(video)
+        return start();
+    })
 
     const history: OpenAIChatMessage[] = [
         {
@@ -64,13 +68,14 @@ export const query = async () => {
     ];
 
     const start = async () => {
-        rl.question('You: ', async (userInput) => {
+
+        readlineInput('What would you like to know about the video: ', async (userInput) => {
             if (userInput.toLowerCase() === 'exit') {
-                rl.close();
+                mainApp();
                 return;
             }
 
-            const results = await store.similaritySearch(userInput, 2);
+            const results = await store.similaritySearch(userInput, 20);
             const message = formatQAMessage(userInput, results);
 
             try {
@@ -85,6 +90,8 @@ export const query = async () => {
         });
     };
 
-    writeLine('\n\nAI: How can I help you today?\n\n');
-    start();
 };
+
+const readlineInput = async (prompt: string, callback: (userInput: string) => Promise<void>) => {
+    return rl.question(prompt, callback)
+}
