@@ -1,21 +1,27 @@
-import { Document } from 'langchain/document'
-import { MemoryVectorStore } from 'langchain/vectorstores/memory'
-import { OpenAIEmbeddings } from 'langchain/embeddings/openai'
-import { movies } from '../data/movies'
-
-// semantic store that can perform similarity-based searches on its content
-const createStore = async () => {
-    return await MemoryVectorStore.fromDocuments(
-        movies.map((movie) => new Document({
-            pageContent: `Title: ${movie.title}\n${movie.description}`,
-            metadata: { source: movie.id, title: movie.title },
-        })),
-        new OpenAIEmbeddings()
-    )
-}
+import { mainApp, rl, store } from '..'
 
 
-export const search = async (query: string, count = 1) => {
-    const store = await createStore()
-    return store.similaritySearch(query, count)
+
+
+export const search = async (count: number = 1) => {
+
+
+    rl.question('What kind of movie you looking for?: ', async (query) => {
+        if (query.toLowerCase() === 'exit') {
+            mainApp()
+            return
+        }
+
+        try {
+            const result = await store.similaritySearch(query, count)
+            console.log(result)
+
+        } catch (error) {
+            console.info('Search error:', error)
+        }
+
+        search()
+    })
+
+
 }

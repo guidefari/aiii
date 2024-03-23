@@ -1,7 +1,7 @@
 import readline from 'node:readline'
 import { formatMessage, newMessage } from '../util/messages'
 import type { OpenAIChatMessage } from '../types'
-import { rl } from '..'
+import { mainApp, rl } from '..'
 
 
 export const chat = () => {
@@ -14,10 +14,9 @@ export const chat = () => {
         }
     ]
     const start = async () => {
-        console.log('history:', history)
         rl.question('You: ', async (userInput) => {
             if (userInput.toLowerCase() === 'exit') {
-                rl.close()
+                mainApp()
                 return
             }
             const userMessage = formatMessage(userInput)
@@ -38,7 +37,7 @@ export const chat = () => {
     start()
 }
 
-const writeLine = (text: string) => {
+export const writeLine = (text: string) => {
     process.stdout.write(text)
 }
 
