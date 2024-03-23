@@ -6,8 +6,9 @@ import { movies } from './data/movies'
 import { MemoryVectorStore } from 'langchain/vectorstores/memory'
 import { Document } from 'langchain/document'
 import { OpenAIEmbeddings } from 'langchain/embeddings/openai'
+import { query } from './modules/youtubeQA'
 
-export const openaiApiKey = Object.freeze(new OpenAI({
+export const openaiApiClient = Object.freeze(new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 }))
 
@@ -30,7 +31,7 @@ export const createStore = async () => {
 export const store = await createStore()
 
 export const mainApp = async () => {
-  rl.question('Select an option - (1) Run chat app, (2) Search, (3) Exit: ', (answer) => {
+  rl.question('Select an option - (1) Run chat app, (2) Search, (3) Query Document and youtube, (4) Exit: ', (answer) => {
     switch (answer.toLowerCase()) {
       case '1':
         chat()
@@ -39,6 +40,9 @@ export const mainApp = async () => {
         search()
         break;
       case '3':
+        query()
+        break;
+      case '4':
       case 'exit':
         console.log('Exiting...');
         rl.close();
