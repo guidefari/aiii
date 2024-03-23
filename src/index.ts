@@ -6,7 +6,7 @@ import { movies } from './data/movies'
 import { MemoryVectorStore } from 'langchain/vectorstores/memory'
 import { Document } from 'langchain/document'
 import { OpenAIEmbeddings } from 'langchain/embeddings/openai'
-import { query } from './modules/qa'
+import { query } from './modules/youtubeQA'
 
 export const openaiApiClient = Object.freeze(new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
