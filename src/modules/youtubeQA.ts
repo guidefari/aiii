@@ -11,8 +11,6 @@ import { formatMessage, formatQAMessage, newMessage, newQAMessage } from '../uti
 import { writeLine } from './chat'
 import path from 'node:path'
 
-// const video = `https://youtu.be/zR_iuq2evXo?si=cG8rODgRgXOx9_Cn`
-
 export const createStore = (docs: Document[]) =>
     MemoryVectorStore.fromDocuments(docs, new OpenAIEmbeddings())
 
